@@ -16,22 +16,7 @@ Migrate(app, db)
 # 14. add migrate command to manager
 manager.add_command('db', MigrateCommand)
 
-@app.route('/')
-def index():
-    # session['name'] = "itheima"
 
-    logging.debug("test debug")
-    logging.warning("test warning")
-    logging.error("test error")
-    logging.fatal("test fatal")
-
-    # this is how flask logs
-    # current_app.logger.debug("current app logger debug")
-    # current_app.logger.warning("current app logger warning")
-    # current_app.logger.error("current app logger error")
-    # current_app.logger.fatal("current app logger fatal")
-
-    return "success!"
 
 
 def main():

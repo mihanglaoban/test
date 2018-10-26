@@ -7,8 +7,9 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from redis import StrictRedis
-
 from config import config
+
+from info.modules.index import index_blue
 
 # 19. extract the db from create_app
 db = SQLAlchemy()
@@ -46,5 +47,7 @@ def create_app(config_name):
     CSRFProtect(app)
     # 8. set session to be stored in redis
     Session(app)
+
+    app.register_blueprint(index_blue)
 
     return app
