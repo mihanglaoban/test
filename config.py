@@ -24,3 +24,20 @@ class Config(object):
     SESSION_REDIS = StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
     SESSION_PERMANENT = False
     PERMANENT_SESSION_LIFETIME = 86400 * 2
+
+# 17. create different configuration for different mode
+class DevelopmentConfig(Config):
+    DEBUG = True
+
+class ProductionConfig(Config):
+    DEBUG = False
+
+class TestingConfig(Config):
+    DEBUG = True
+    TESTING = True
+
+config = {
+    "development": DevelopmentConfig,
+    "production": ProductionConfig,
+    "testing": TestingConfig
+}
