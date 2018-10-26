@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from redis import StrictRedis
 
 
 class Config(object):
@@ -9,6 +10,10 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "mysql://tar:tar@127.0.0.1:3306/information27"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # 6. configure redis
+    REDIS_HOST = "127.0.0.1"
+    REDIS_PORT = "6379"
+
 
 app = Flask(__name__)
 
@@ -16,7 +21,8 @@ app = Flask(__name__)
 app.config.from_object(Config)
 # 3. add mySQL
 db = SQLAlchemy(app)
-
+# 5. initialize redis object
+redis_store = StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT)
 
 @app.route('/')
 def index():
