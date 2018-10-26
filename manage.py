@@ -1,7 +1,3 @@
-# 15. extract config class from manage.py to a new file
-import logging
-
-from flask import session, current_app
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 # 11. create manager to enable command line control
@@ -15,8 +11,6 @@ manager = Manager(app)
 Migrate(app, db)
 # 14. add migrate command to manager
 manager.add_command('db', MigrateCommand)
-
-
 
 
 def main():
