@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 
 from redis import StrictRedis
@@ -25,12 +26,18 @@ class Config(object):
     SESSION_PERMANENT = False
     PERMANENT_SESSION_LIFETIME = 86400 * 2
 
+    # 22. set up log level
+    LOG_LEVEL = logging.DEBUG
+
 # 17. create different configuration for different mode
 class DevelopmentConfig(Config):
     DEBUG = True
 
 class ProductionConfig(Config):
     DEBUG = False
+    # 23. specify the logging level for production mode
+    LOG_LEVEL = logging.WARNING
+
 
 class TestingConfig(Config):
     DEBUG = True
