@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from redis import StrictRedis
 from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
 
 class Config(object):
@@ -45,7 +46,10 @@ CSRFProtect(app)
 Session(app)
 # 11. create manager to enable command line control
 manager = Manager(app)
-
+# 12. use migrate to relate the app and mySQL
+Migrate(app, db)
+# 13. add migrate command to manager
+manager.add_command('db', MigrateCommand)
 
 @app.route('/')
 def index():
