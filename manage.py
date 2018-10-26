@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import CSRFProtect
 from redis import StrictRedis
 
 
@@ -23,6 +24,9 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 # 5. initialize redis object
 redis_store = StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT)
+# 7. start CSRF protection for server validation
+CSRFProtect(app)
+
 
 @app.route('/')
 def index():
