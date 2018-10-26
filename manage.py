@@ -6,6 +6,7 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from redis import StrictRedis
+from flask_script import Manager
 
 
 class Config(object):
@@ -42,6 +43,8 @@ redis_store = StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT)
 CSRFProtect(app)
 # 8. set session to be stored in redis
 Session(app)
+# 11. create manager to enable command line control
+manager = Manager(app)
 
 
 @app.route('/')
@@ -51,7 +54,8 @@ def index():
 
 
 def main():
-    app.run()
+    #12. use manager to run the app
+    manager.run()
 
 
 if __name__ == "__main__":
