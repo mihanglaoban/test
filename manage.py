@@ -1,4 +1,8 @@
-from flask import Flask
+import base64
+import os
+
+from flask import Flask, session
+from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from redis import StrictRedis
@@ -11,9 +15,19 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "mysql://tar:tar@127.0.0.1:3306/information27"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # 10. set a secret key for session
+    SECRET_KEY = base64.b16encode(os.urandom(48)).decode("utf8")
+
     # 6. configure redis
     REDIS_HOST = "127.0.0.1"
     REDIS_PORT = "6379"
+
+    # 9. session configuration
+    SESSION_TYPE = "redis"
+    SESSION_USE_SIGNER = True
+    SESSION_REDIS = StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
+    SESSION_PERMANENT = False
+    PERMANENT_SESSION_LIFETIME = 86400 * 2
 
 
 app = Flask(__name__)
@@ -26,10 +40,13 @@ db = SQLAlchemy(app)
 redis_store = StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT)
 # 7. start CSRF protection for server validation
 CSRFProtect(app)
+# 8. set session to be stored in redis
+Session(app)
 
 
 @app.route('/')
 def index():
+    session['name'] = "itheima"
     return "success!"
 
 
