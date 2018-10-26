@@ -1,6 +1,4 @@
-import base64
-import os
-
+# extract config class from manage.py to a new file
 from flask import Flask, session
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
@@ -8,29 +6,7 @@ from flask_wtf import CSRFProtect
 from redis import StrictRedis
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-
-
-class Config(object):
-    # 1.create a config class
-    DEBUG = True
-    # 4. configure mySQL
-    SQLALCHEMY_DATABASE_URI = "mysql://tar:tar@127.0.0.1:3306/information27"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    # 10. set a secret key for session
-    SECRET_KEY = base64.b16encode(os.urandom(48)).decode("utf8")
-
-    # 6. configure redis
-    REDIS_HOST = "127.0.0.1"
-    REDIS_PORT = "6379"
-
-    # 9. session configuration
-    SESSION_TYPE = "redis"
-    SESSION_USE_SIGNER = True
-    SESSION_REDIS = StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
-    SESSION_PERMANENT = False
-    PERMANENT_SESSION_LIFETIME = 86400 * 2
-
+from config import Config
 
 app = Flask(__name__)
 
@@ -46,9 +22,9 @@ CSRFProtect(app)
 Session(app)
 # 11. create manager to enable command line control
 manager = Manager(app)
-# 12. use migrate to relate the app and mySQL
+# 13. use migrate to relate the app and mySQL
 Migrate(app, db)
-# 13. add migrate command to manager
+# 14. add migrate command to manager
 manager.add_command('db', MigrateCommand)
 
 @app.route('/')
