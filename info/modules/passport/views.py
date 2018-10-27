@@ -1,4 +1,4 @@
-from flask import request, abort, current_app
+from flask import request, abort, current_app, make_response
 
 from info import redis_store, constants
 from info.utils.captcha.captcha import captcha
@@ -19,4 +19,6 @@ def get_image_code():
         current_app.logger.error(e)
         abort(500)
 
-    return image
+    response = make_response(image)
+    response.headers['Content-Type'] = "image/jpg"
+    return response
