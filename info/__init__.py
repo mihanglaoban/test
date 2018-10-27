@@ -14,8 +14,6 @@ from config import config
 db = SQLAlchemy()
 redis_store = None # type: StrictRedis
 
-# redis_store : StrictRedis = None
-redis_store = None # type: StrictRedis
 
 # 21. set up log
 def setup_log(config_name):

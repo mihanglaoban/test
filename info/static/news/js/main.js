@@ -34,6 +34,7 @@ $(function(){
 
 	// 点击输入框，提示文字上移
 	$('.form_group').on('click focusin',function(){
+		// $(this).children('.input_tip').animate({'top':-5,'font-size':12},'fast').siblings('input').focus().parent().addClass('hotline');
 		$(this).children('.input_tip').animate({'top':-5,'font-size':12},'fast').siblings('input').focus().parent().addClass('hotline');
 	})
 

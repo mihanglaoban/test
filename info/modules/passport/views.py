@@ -4,6 +4,13 @@ from info import redis_store, constants
 from info.utils.captcha.captcha import captcha
 from . import passport_blue
 
+
+# @passport_blue.route("/sms_code", method=["POST"])
+# def send_sms_code():
+
+
+
+
 @passport_blue.route("/image_code")
 def get_image_code():
     image_code_id = request.args.get("imageCodeId", None)
