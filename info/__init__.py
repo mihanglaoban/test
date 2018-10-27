@@ -13,6 +13,7 @@ from info.modules.index import index_blue
 
 # 19. extract the db from create_app
 db = SQLAlchemy()
+redis_store = None # type: StrictRedis
 
 
 # 21. set up log
@@ -42,12 +43,17 @@ def create_app(config_name):
     # 20. initiate app
     db.init_app(app)
     # 5. initialize redis object
+    global redis_store
     redis_store = StrictRedis(host=config[config_name].REDIS_HOST, port=config[config_name].REDIS_PORT)
     # 7. start CSRF protection for server validation
     CSRFProtect(app)
     # 8. set session to be stored in redis
     Session(app)
 
+    from info.modules.index import index_blue
     app.register_blueprint(index_blue)
+
+    from info.modules.passport import passport_blue
+    app.register_blueprint(passport_blue)
 
     return app
