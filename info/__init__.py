@@ -9,12 +9,13 @@ from flask_wtf import CSRFProtect
 from redis import StrictRedis
 from config import config
 
-from info.modules.index import index_blue
 
 # 19. extract the db from create_app
 db = SQLAlchemy()
 redis_store = None # type: StrictRedis
 
+# redis_store : StrictRedis = None
+redis_store = None # type: StrictRedis
 
 # 21. set up log
 def setup_log(config_name):
