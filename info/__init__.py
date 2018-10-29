@@ -43,7 +43,7 @@ def create_app(config_name):
     db.init_app(app)
     # 5. initialize redis object
     global redis_store
-    redis_store = StrictRedis(host=config[config_name].REDIS_HOST, port=config[config_name].REDIS_PORT)
+    redis_store = StrictRedis(host=config[config_name].REDIS_HOST, port=config[config_name].REDIS_PORT, decode_responses=True)
     # 7. start CSRF protection for server validation
     # CSRFProtect(app)
     # 8. set session to be stored in redis

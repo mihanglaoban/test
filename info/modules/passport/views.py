@@ -10,6 +10,70 @@ from info.utils.captcha.captcha import captcha
 from info.utils.response_code import RET
 from . import passport_blue
 
+
+@passport_blue.route('/login', methods=["POST"])
+def login():
+    """
+    登录
+    1. 获取参数
+    2. 校验参数
+    3. 校验密码是否正确
+    4. 保存用户的登录状态
+    5. 响应
+    :return:
+    """
+
+    # 1. 获取参数
+    params_dict = request.json
+    mobile = params_dict.get("mobile")
+    password = params_dict.get("password")
+
+    # 2. 校验参数
+    if not all([mobile, password]):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    # 校验手机号是否正确
+    if not re.match('1[35678]\\d{9}', mobile):
+        return jsonify(errno=RET.PARAMERR, errmsg="手机号格式不正确")
+
+    # 3. 校验密码是否正确
+    # 先查询出当前是否有指定手机号的用户
+    try:
+        user = User.query.filter(User.mobile == mobile).first()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
+    # 判断用户是否存在
+    if not user:
+        return jsonify(errno=RET.NODATA, errmsg="用户不存在")
+
+    # 校验登录的密码和当前用户的密码是否一致\
+    # if not user.check_passowrd(passport) 这里出现的bug 代码重新敲一边（好无语的bug）
+    if not user.check_passowrd(password):
+        return jsonify(errno=RET.PWDERR, errmsg="用户名或者密码错误")
+
+    # 4. 保存用户的登录状态
+    session["user_id"] = user.id
+    session["mobile"] = user.mobile
+    session["nick_name"] = user.nick_name
+
+    # 设置当前用户最后一次登录的时间
+    user.last_login = datetime.now()
+
+    # 如果在视图函数中，对模型身上的属性有修改，那么需要commit到数据库保存
+    # 但是其实可以不用自己去写 db.session.commit(),前提是对SQLAlchemy有过相关配置
+
+    # try:
+    #     db.session.commit()
+    # except Exception as e:
+    #     db.session.rollback()
+    #     current_app.logger.error(e)
+
+    # 5. 响应
+    return jsonify(errno=RET.OK, errmsg="登录成功")
+
+
+
 @passport_blue.route('/register', methods=["POST"])
 def register():
     """
@@ -39,7 +103,7 @@ def register():
 
     # 3. 取到服务器保存的真实的短信验证码内容
     try:
-        real_sms_code = redis_store.get("SMS_" + mobile).decode("utf8")
+        real_sms_code = redis_store.get("SMS_" + mobile)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg="数据查询失败")
@@ -61,7 +125,6 @@ def register():
     # 需求：在设置 password 的时候，去对 password 进行加密，
     # 并且将加密结果给 user.password_hash 赋值
     user.password = password
-
 
     # 6. 添加到数据库
     try:
@@ -115,7 +178,7 @@ def send_sms_code():
 
     # 3. 先从redis中取出真实的验证码内容
     try:
-        real_image_code = redis_store.get("ImageCodeId_" + image_code_id).decode('utf8')
+        real_image_code = redis_store.get("ImageCodeId_" + image_code_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg="数据查询失败")
