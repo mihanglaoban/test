@@ -11,6 +11,7 @@ class Config(object):
     # 4. configure mySQL
     SQLALCHEMY_DATABASE_URI = "mysql://tar:tar@127.0.0.1:3306/information27"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 
     # 10. set a secret key for session
     SECRET_KEY = base64.b16encode(os.urandom(48)).decode("utf8")
