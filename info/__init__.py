@@ -10,7 +10,7 @@ from redis import StrictRedis
 from config import config
 
 
-# 19. extract the db from create_app
+# 19. extracthttp://58.222.34.72:8080/# the db from create_app
 db = SQLAlchemy()
 redis_store = None # type: StrictRedis
 
@@ -45,7 +45,7 @@ def create_app(config_name):
     global redis_store
     redis_store = StrictRedis(host=config[config_name].REDIS_HOST, port=config[config_name].REDIS_PORT)
     # 7. start CSRF protection for server validation
-    CSRFProtect(app)
+    # CSRFProtect(app)
     # 8. set session to be stored in redis
     Session(app)
 
