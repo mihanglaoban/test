@@ -12,7 +12,6 @@ from config import config
 
 
 # 19. extracthttp://58.222.34.72:8080/# the db from create_app
-from info.utils.common import do_index_class
 
 db = SQLAlchemy()
 redis_store = None # type: StrictRedis
@@ -52,6 +51,7 @@ def create_app(config_name):
     # 8. set session to be stored in redis
     Session(app)
     #添加自定义过滤器
+    from info.utils.common import do_index_class
     app.add_template_filter(do_index_class, "index_class")
 
 
