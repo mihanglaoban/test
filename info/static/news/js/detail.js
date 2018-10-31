@@ -164,18 +164,18 @@ $(function () {
         if (sHandler.indexOf('reply_sub') >= 0) {
             alert('回复评论')
         }
-    })
+    });
 
     // 关注当前新闻作者
     $(".focus").click(function () {
 
-    })
+    });
 
     // 取消关注当前新闻作者
     $(".focused").click(function () {
 
     })
-})
+});
 
 function updateCommentCount() {
     var count = $(".comment_list").length;
