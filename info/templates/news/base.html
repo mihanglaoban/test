@@ -16,18 +16,21 @@
         {% block categoryBlock %}
             <ul class="menu fl">
                 {% for category in data.category_li %}
-                     {% if loop.index == 1 %}
-                        <li data-cid="{{ category.id }}" class="active"><a href="javascript:;">{{ category.name }}</a></li>
-                     {% else %}
+                    {% if loop.index == 1 %}
+                        <li data-cid="{{ category.id }}" class="active"><a href="javascript:;">{{ category.name }}</a>
+                        </li>
+                    {% else %}
                         <li data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
-                     {% endif %}
+                    {% endif %}
                 {% endfor %}
             </ul>
         {% endblock %}
         {% if data.user %}
             <!-- 用户登录后显示下面，隐藏上面 -->
             <div class="user_login fr">
-                <img src="{% if data.user.avatar_url %}{{ data.user.avatar_url }}{% else %}../../static/news/images/person01.png{% endif %}" class="lgin_pic">
+                <img src="
+                        {% if data.user.avatar_url %}{{ data.user.avatar_url }}{% else %}../../static/news/images/person01.png{% endif %}"
+                     class="lgin_pic">
                 <a href="#">{{ data.user.nick_name }}</a>
                 <a href="javascript:;" onclick="logout()">退出</a>
             </div>
@@ -38,24 +41,27 @@
         {% endif %}
     </div>
 </div>
-	<audio controls="controls" autoplay="autoplay" style="display: none">
-  	    <source src="../../static/加羽沢美濃-夜空ノムコウ.mp3" type="audio/mp3"/>
-	</audio>
+<audio controls="controls" autoplay="autoplay" style="display: none">
+    <source src="../../static/加羽沢美濃-夜空ノムコウ.mp3" type="audio/mp3"/>
+</audio>
 <div class="conter_con">
     {% block contentBlock %}
     {% endblock %}
-    <div class="rank_con fr">
-        {% block authorBlock %}
-        {% endblock %}
-        <div class="rank_title">
-            <h3>点击排行</h3>
+    {% block rankBlock %}
+        <div class="rank_con fr">
+            {% block authorBlock %}
+            {% endblock %}
+            <div class="rank_title">
+                <h3>点击排行</h3>
+            </div>
+            <ul class="rank_list">
+                {% for new in data.news_dict_li %}
+                    <li><span class="{{ loop.index0 | index_class }}">{{ loop.index }}</span><a
+                            href="#">{{ new.title }}</a></li>
+                {% endfor %}
+            </ul>
         </div>
-        <ul class="rank_list">
-            {% for new in data.news_dict_li %}
-            <li><span class="{{ loop.index0 | index_class }}">{{ loop.index }}</span><a href="#">{{ new.title }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
+    {% endblock %}
 </div>
 <div class="footer">
     <div class="footer_links">

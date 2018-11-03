@@ -209,13 +209,13 @@ $(function () {
         }
 
         if (sHandler.indexOf('reply_sub') >= 0) {
-            var $this = $(this)
-            var news_id = $this.parent().attr('data-newsid')
-            var parent_id = $this.parent().attr('data-commentid')
-            var comment = $this.prev().val()
+            var $this = $(this);
+            var news_id = $this.parent().attr('data-newsid');
+            var parent_id = $this.parent().attr('data-commentid');
+            var comment = $this.prev().val();
 
             if (!comment) {
-                alert('请输入评论内容')
+                alert('请输入评论内容');
                 return
             }
             var params = {
