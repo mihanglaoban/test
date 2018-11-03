@@ -1,10 +1,80 @@
 from flask import render_template, current_app, session, g, abort, jsonify, request
 
 from info import constants, db
-from info.models import News, User, Comment
+from info.models import News, User, Comment, CommentLike
 from info.modules.news import news_blue
 from info.utils.common import user_login_data
 from info.utils.response_code import RET
+
+
+@news_blue.route('/comment_like', methods=["POST"])
+@user_login_data
+def comment_like():
+    """
+    评论点赞
+    :return:
+    """
+    user = g.user
+    if not user:
+        return jsonify(errno=RET.SESSIONERR, errmsg="用户未登录")
+
+    # 1. 取到请求参数
+    comment_id = request.json.get("comment_id")
+    action = request.json.get("action")
+
+    # 2. 判断参数
+    if not all([comment_id, action]):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    if action not in ["add", "remove"]:
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    try:
+        comment_id = int(comment_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    # 3. 获取到要被点赞的评论模型
+    try:
+        comment = Comment.query.get(comment_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
+
+    if not comment:
+        return jsonify(errno=RET.NODATA, errmsg="评论不存在")
+
+    if action == "add":
+        comment_like_model = CommentLike.query.filter(CommentLike.user_id == user.id,
+                                                      CommentLike.comment_id == comment.id).first()
+        #要先进行数据库查询判断，因为在CommentLike中comment_id和user_id都是作为主键存在的，不能重复
+        if not comment_like_model:
+            # 点赞评论
+            comment_like_model = CommentLike()
+            comment_like_model.user_id = user.id
+            comment_like_model.comment_id = comment.id
+            db.session.add(comment_like_model)
+            # 更新点赞次数
+            comment.like_count += 1
+    else:
+        # 取消点赞评论
+        comment_like_model = CommentLike.query.filter(CommentLike.user_id == user.id,
+                                                      CommentLike.comment_id == comment.id).first()
+        if comment_like_model:
+            #如果用comment_like_model.delete()会报错，因为comment_like_model中没有delete函数
+            db.session.delete(comment_like_model)
+            # 更新点赞次数
+            comment.like_count -= 1
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据库操作失败")
+
+    return jsonify(errno=RET.OK, errmsg="OK")
 
 
 @news_blue.route('/news_comment', methods=["POST"])
