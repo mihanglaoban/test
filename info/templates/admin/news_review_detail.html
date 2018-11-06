@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>新经资讯后台管理</title>
-    <link rel="stylesheet" type="text/css" href="../css/reset.css">
-    <link rel="stylesheet" type="text/css" href="../css/main.css">
-    <script type="text/javascript" src="../js/jquery-1.12.4.min.js"></script>
-    <script src="../tinymce/js/tinymce/tinymce.min.js"></script>
-    <script src="../js/news_review_detail.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+    <script src="../../static/admin/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script src="../../static/admin/js/news_review_detail.js"></script>
 </head>
 <body>
     <div class="breadcrub">
@@ -52,9 +52,9 @@
             </div>
             <!-- 隐藏字段，用于记录当前新闻id -->
             <input name="news_id" value="1" hidden>
-            </form>    
+            </form>
         </div>
-        
+
         <script>
         $(function(){
             var $radio = $('input[name="action"]');
@@ -82,8 +82,8 @@
                 nonbreaking_force_tab: true,
                 readonly:1
             });
-            
-            })        
-        </script>    
+
+            })
+        </script>
 </body>
 </html>
