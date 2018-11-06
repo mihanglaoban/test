@@ -1,17 +1,19 @@
-{% extends "news/base.html" %}
-{% block titleBlock %}
-    文章详情页
-{% endblock %}
+{% extends 'news/base.html' %}
 
-{% block scriptBlock %}
-    <script type="text/javascript" src="../../static/news/js/detail.js"></script>
+{% block titleBlock %}
+文章详情页
 {% endblock %}
 
 {% block categoryBlock %}
+
+{% endblock %}
+
+{% block scriptBlock %}
+<script type="text/javascript" src="../../static/news/js/detail.js"></script>
 {% endblock %}
 
 {% block contentBlock %}
-    <div class="detail_con fl">
+ <div class="detail_con fl">
         <h3>{{ data.news.title }}</h3>
 
         <div class="detail_about clearfix">
@@ -24,6 +26,9 @@
         {% else %} none {% endif %};"><span class="out">已收藏</span><span class="over">取消收藏</span></a>
         <a href="javascript:;" class="collection block-center" data-newid="{{ data.news.id }}" style="display: {% if data.is_collected %} none
         {% else %} block {% endif %};">收藏</a>
+
+{#        <a href="javascript:;" class="collection block-center">收藏</a>#}
+{#        <a href="javascript:;" class="collected block-center" style="display: none"><span class="out">已收藏</span><span class="over">取消收藏</span></a>#}
 
 
          {% if data.user %}
@@ -48,7 +53,6 @@
             {{ data.news.comments_count }}条评论
         </div>
 
-
         <div class="comment_list_con">
             {% for comment in data.comments %}
                 <div class="comment_list">
@@ -70,6 +74,7 @@
                         </div>
                     {% endif %}
                     <div class="comment_time fl">{{ comment.create_time }}</div>
+{#                    <a href="javascript:;" class="comment_up {% if comment.is_like %}has_comment_up{% endif %} fr" data-commentid="{{ comment.id }}" data-newsid="{{ comment.news_id }}">赞</a>#}
                     <a href="javascript:;" class="comment_up
                         {% if comment.is_like %}
                             has_comment_up
@@ -92,17 +97,29 @@
                 </div>
             {% endfor %}
         </div>
-    </div>
+
+ </div>
+
 {% endblock %}
 
+
 {% block authorBlock %}
-    <div class="author_card">
-        <a href="#" class="author_pic"><img src="../../static/news/images/user_pic.png" alt="author_pic"></a>
-        <a href="#" class="author_name">张大山</a>
-        <div class="author_resume">张大山的简介,张大山</div>
-        <div class="writings"><span>总篇数</span><b>23</b></div>
-        <div class="follows"><span>粉丝</span><b>36</b></div>
-        <a href="javascript:;" class="focus fr">关注</a>
-        <a href="javascript:;" class="focused fr"><span class="out">已关注</span><span class="over">取消关注</span></a>
-    </div>
+    {% if data.news.author %}
+        <div class="author_card">
+            <a href="#" class="author_pic"><img src="{% if data.news.author.avatar_url %}
+            {{ data.news.author.avatar_url }}
+            {% else %}
+            ../../static/news/images/user_pic.png
+            {% endif %}" alt="author_pic"></a>
+            <a href="#" class="author_name">{{ data.news.author.nick_name }}</a>
+            <div class="author_resume">签名：{{ data.news.author.signature }}</div>
+            <div class="writings"><span>总篇数</span><b>{{ data.news.author.news_count }}</b></div>
+            <div class="follows"><span>粉丝</span><b>{{ data.news.author.followers_count }}</b></div>
+            <a href="javascript:;" class="focus fr" data-userid="{{ data.news.author.id }}" style="display: {% if data.is_followed %}none{% else %}block{% endif %}">关注</a>
+            <a href="javascript:;" class="focused fr" data-userid="{{ data.news.author.id }}" style="display: {% if data.is_followed %}block{% else %}none{% endif %}"><span class="out">已关注</span><span class="over">取消关注</span></a>
+{#            <a href="javascript:;" class="focus fr" data-userid="{{ data.news.author.id }}">关注</a>#}
+{#            <a href="javascript:;" class="focused fr" data-userid="{{ data.news.author.id }}"><span class="out">已关注</span><span class="over">取消关注</span></a>#}
+        </div>
+    {% endif %}
 {% endblock %}
+

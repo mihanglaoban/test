@@ -1,10 +1,67 @@
-from flask import render_template, current_app, session, g, abort, jsonify, request
+# -*- coding: utf-8 -*-
+# @Author  : junjunzai
+# @Email   : junjunzai@163.com
+# @File    : views.py
+# @Software: PyCharm
+from flask import abort, jsonify
+from flask import current_app
+from flask import g
+from flask import render_template
+from flask import request
 
 from info import constants, db
 from info.models import News, User, Comment, CommentLike
 from info.modules.news import news_blue
 from info.utils.common import user_login_data
 from info.utils.response_code import RET
+
+@news_blue.route('/followed_user', methods=["POST"])
+@user_login_data
+def followed_user():
+    """关注或者取消关注用户"""
+    #存在逻辑bug就是自己能关注自己
+    # 0. 取到自己的登录信息
+    user = g.user
+    if not user:
+        return jsonify(errno=RET.SESSIONERR, errmsg="未登录")
+
+    # 1. 取参数
+    user_id = request.json.get("user_id")
+    action = request.json.get("action")
+
+    if not all([user_id, action]):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    # 2. 判断参数
+    if action not in("follow", "unfollow"):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    # 3. 取到要被关注的用户
+    try:
+        other = User.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
+
+    if not other:
+        return jsonify(errno=RET.NODATA, errmsg="未查询到数据")
+
+    # 4. 根据要执行的操作去修改对应的数据
+    if action == "follow":
+        if other not in user.followed:
+            # 当前用户的关注列表添加一个值
+            user.followed.append(other)
+        else:
+            return jsonify(errno=RET.DATAEXIST, errmsg="当前用户已被关注")
+    else:
+        # 取消关注
+        if other in user.followed:
+            user.followed.remove(other)
+        else:
+            return jsonify(errno=RET.DATAEXIST, errmsg="当前用户未被关注")
+
+    return jsonify(errno=RET.OK, errmsg="操作成功")
+
 
 
 @news_blue.route('/comment_like', methods=["POST"])
@@ -75,6 +132,7 @@ def comment_like():
         return jsonify(errno=RET.DBERR, errmsg="数据库操作失败")
 
     return jsonify(errno=RET.OK, errmsg="OK")
+
 
 
 @news_blue.route('/news_comment', methods=["POST"])
@@ -194,9 +252,14 @@ def collect_news():
 
 
 
-@news_blue.route("/<int:news_id>")
+@news_blue.route('/<int:news_id>')
 @user_login_data
 def news_detail(news_id):
+    """
+    新闻详情
+    :return:
+    """
+    # 取到用户id
     user = g.user
 
     # 右侧的新闻排行的逻辑
@@ -267,12 +330,20 @@ def news_detail(news_id):
             comment_dict["is_like"] = True
         comment_dict_li.append(comment_dict)
 
+    is_followed = False
+    # if 当前新闻有作者，并且 当前登录用户已关注过这个用户
+    if news.user and user:
+        # if user 是否关注过 news.user
+        if news.user in user.followed:
+            is_followed = True
+
     data = {
         "user": user.to_dict() if user else None,
         "news_dict_li": news_dict_li,
         "news": news.to_dict(),
         "is_collected": is_collected,
+        "is_followed": is_followed,
         "comments":comment_dict_li
     }
 
-    return render_template("news/detail.html", data=data)
+    return render_template('news/detail.html', data = data)
